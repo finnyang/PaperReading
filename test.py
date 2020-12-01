@@ -36,6 +36,7 @@ class MnistMilNet(nn.Module):
         self.classifier = nn.Linear(128, 2, bias=False)
         self.loss_fun = nn.NLLLoss()
 
+
     def forward(self, x, target=None, is_train=True):
         instance_number = 10 if is_train else target.shape[0]
 
@@ -87,36 +88,36 @@ def test(model, test_loader):
     right = 0
     length = 0
     save_index = 0
+    max_save = 20
 
     if not os.path.exists(os.path.join(os.path.dirname(__file__), "test_result")):
         os.mkdir(os.path.join(os.path.dirname(__file__), "test_result"))
 
     for i, (data, target) in enumerate(test_loader):
         data, target = data.cuda(), target.cuda()
-        visible_data = (data*0.3081+0.1307)*255
-        visible_data = visible_data.cpu().numpy()
-
-        temp = []
-        for i in range(visible_data.shape[0]):
-            temp.append(visible_data[i, 0, :, :])
-        image = np.concatenate(temp, 1)
-        image = image.astype(np.uint8)
-        mask = np.zeros(shape=[image.shape[0]+20, image.shape[1]], dtype=np.uint8)
-        mask[0:28, :] = image
 
         pred, weight = model(data, target, False)
-        target = target.reshape(-1, len(temp))
+        target = target.reshape(-1, data.shape[0])
         target = (((target==9)*1).sum(1)!= 0)*1
-
         _, max_index = pred.max(1)
         right += ((max_index == target)*1).sum()
         length += len(pred)
+        
+        if save_index < max_save:
+            visible_data = (data*0.3081+0.1307)*255
+            visible_data = visible_data.cpu().numpy()
 
-        _, index = weight.max(0)
-        if max_index == 1:
-            mask[30:46, index*28+2:index*28+26] = 255
-        im = Image.fromarray(mask)
-        if save_index < 20:
+            temp = []
+            for i in range(visible_data.shape[0]):
+                temp.append(visible_data[i, 0, :, :])
+            image = np.concatenate(temp, 1)
+            image = image.astype(np.uint8)
+            mask = np.zeros(shape=[image.shape[0]+20, image.shape[1]], dtype=np.uint8)
+            mask[0:28, :] = image
+            _, index = weight.max(0)
+            if max_index == 1:
+                mask[30:46, index*28+2:index*28+26] = 255
+            im = Image.fromarray(mask)
             im.save(os.path.join(os.path.join(os.path.dirname(__file__), "test_result"), "out{}.jpg".format(save_index)))
         save_index += 1
     print("acc={:.4f}".format(right/length))
@@ -160,6 +161,6 @@ def testing(epoch):
 
 
 if __name__ == "__main__":
-    max_epoch = 40
+    max_epoch = 50
     training(max_epoch)
     testing(max_epoch)
