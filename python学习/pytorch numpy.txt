@@ -1,0 +1,3 @@
+pytorch reshape view resize
+reshape和view都可以修改Tensor的维度，但是差别在于，view要求Tensor必须是contiguous，reshape没有要求。
+注：如果对 tensor 调用过 transpose, permute等操作的话会使该tensor在内存中变得不再连续。
