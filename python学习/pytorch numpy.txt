@@ -1,3 +1,24 @@
-pytorch reshape view resize
+1、pytorch reshape view resize
 reshape和view都可以修改Tensor的维度，但是差别在于，view要求Tensor必须是contiguous，reshape没有要求。
 注：如果对 tensor 调用过 transpose, permute等操作的话会使该tensor在内存中变得不再连续。
+resize_是修改Tensor的长度。
+
+2、切片索引后维度的变化
+如果索引值是标量，索引后的量维度减小1。如果索引是。
+
+3、torch.Tensor和torch.tensor
+torch.Tensor是一个类，使用Tensor，生成的类为float32类型，可以指定维度，或者指定数据。
+torch.tensor需要指定数据。
+
+4、unsequeeze_()与unsequeeze()的区别
+unsequeeze_(dim)和unsequeeze(dim)都是用来扩张维度的，在制定dim增加一维。
+unsequeeze_(dim)会进行inplace操作，即在原变量上直接增维，再使用这个变量的时候维度就变了。
+unsequeeze(dim)不会进行inplace操作，需要赋值给新变量，不会改变原变量的维度。
+
+5、pytorch detach
+detach就是截断反向传播的梯度流。
+
+6、Variable 
+Variable被弃用了，Variable是requires_grad=True的Tensor。
+
+7、
